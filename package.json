@@ -1,0 +1,40 @@
+{
+  "name": "@lonord/pi-dashboard-module-net",
+  "version": "1.0.0",
+  "description": "Net status module for pi dashboard",
+  "main": "lib/",
+  "types": "lib/",
+  "scripts": {
+    "build": "rimraf lib && tsc",
+    "prepublishOnly": "npm run build",
+    "pack": "npm run build && npm pack"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lonord/pi-dashboard-module-net.git"
+  },
+  "keywords": [
+    "net",
+    "status",
+    "raspberrypi"
+  ],
+  "author": "Loy B. <lonord@qq.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/lonord/pi-dashboard-module-net/issues"
+  },
+  "homepage": "https://github.com/lonord/pi-dashboard-module-net#readme",
+  "devDependencies": {
+    "@lonord/react-electron-components": "^1.0.10",
+    "@types/node": "^9.4.6",
+    "@types/react": "^16.0.39",
+    "react": "^16.2.0",
+    "react-dom": "^16.2.0",
+    "rimraf": "^2.6.2",
+    "styled-components": "^3.1.6",
+    "tslint": "^5.9.1",
+    "tslint-react": "^3.5.1",
+    "typescript": "^2.7.2",
+    "typescript-styled-plugin": "^0.6.0"
+  }
+}
