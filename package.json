@@ -25,7 +25,7 @@
   },
   "homepage": "https://github.com/lonord/pi-dashboard-module-net#readme",
   "devDependencies": {
-    "@lonord/react-electron-components": "^1.0.10",
+    "@lonord/react-electron-components": "^1.0.11",
     "@types/node": "^9.4.6",
     "@types/react": "^16.0.39",
     "react": "^16.2.0",
