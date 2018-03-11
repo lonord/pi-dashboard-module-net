@@ -7,7 +7,7 @@
   "scripts": {
     "build": "rimraf lib && tsc",
     "prepublishOnly": "npm run build",
-    "pack": "npm run build && npm pack"
+    "dev": "pi-dashboard-debug $(pwd)"
   },
   "repository": {
     "type": "git",
@@ -25,7 +25,7 @@
   },
   "homepage": "https://github.com/lonord/pi-dashboard-module-net#readme",
   "devDependencies": {
-    "@lonord/react-electron-components": "^1.0.11",
+    "@lonord/pi-dashboard-debug": "^1.0.4",
     "@types/node": "^9.4.6",
     "@types/react": "^16.0.39",
     "react": "^16.2.0",
@@ -38,6 +38,7 @@
     "typescript-styled-plugin": "^0.6.0"
   },
   "dependencies": {
-    "@lonord/pi-status-rpc-client": "^1.0.6"
+    "@lonord/react-electron-components": "^1.0.12",
+    "@lonord/pi-status-rpc-client": "^1.0.9"
   }
 }

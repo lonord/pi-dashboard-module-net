@@ -1,19 +1,74 @@
-import { Dialog, DialogProps } from '@lonord/react-electron-components'
+import createRPCClient, { RPCClient } from '@lonord/pi-status-rpc-client'
 import * as React from 'react'
 import styled from 'styled-components'
+import { SelectableArea, SubTitle } from './layouts'
 
-export interface DetailDialogProps extends DialogProps {
+export interface DetailProps {
 	onSelectInterface(ifName: string)
 	selectedInterface: string
+	rpcBaseUrl: string
 }
 
-export default class DetailDialog extends React.Component<DetailDialogProps, any> {
+interface DetailDialogState {
+	ifNames: string[]
+	ifNamesLoaded: boolean
+}
+
+export default class Detail extends React.Component<DetailProps, DetailDialogState> {
+
+	state: DetailDialogState = {
+		ifNames: [],
+		ifNamesLoaded: false
+	}
+
+	componentDidMount() {
+		const { rpcBaseUrl } = this.props
+		if (rpcBaseUrl) {
+			createRPCClient(rpcBaseUrl).httpGet('net-interface').then((result) => {
+				this.setState({
+					ifNames: result,
+					ifNamesLoaded: true
+				})
+			}).catch(console.error)
+		}
+	}
+
 	render() {
 		const { selectedInterface, onSelectInterface, ...rest } = this.props
+		const { ifNames, ifNamesLoaded } = this.state
 		return (
-			<Dialog {...rest} title="路由器网速">
-				<div>123</div>
-			</Dialog>
+			<div>
+				<SubTitle>选择网卡</SubTitle>
+				{!ifNamesLoaded
+					? <LoadingText>获取中...</LoadingText>
+					: <div>
+						{ifNames.map((name, idx) => (
+							<IfNameItem key={idx}
+								isSelected={name === selectedInterface}
+								onClick={() => onSelectInterface && onSelectInterface(name)}>
+								<IfNameItemText>{name}</IfNameItemText>
+							</IfNameItem>
+						))}
+					</div>}
+			</div>
 		)
 	}
 }
+
+const LoadingText = styled.div`
+	height: 40px;
+	line-height: 40px;
+	font-size: 12px;
+	color: #ccc;
+	text-align: center;
+`
+
+const IfNameItem = styled(SelectableArea) `
+	cursor: pointer;
+	padding: 8px;
+	color: #666;
+`
+
+const IfNameItemText = styled.div`
+	font-size: 14px;
+`

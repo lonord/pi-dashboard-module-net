@@ -1,4 +1,7 @@
 export default function formatSpeedUnit(n: number) {
+	if (n < 0) {
+		return '-- KB/s'
+	}
 	let s = null
 	let unit = null
 	if (n > 1024 * 1024) {

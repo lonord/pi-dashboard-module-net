@@ -1,8 +1,10 @@
 import createRPCClient, { RPCClient, SSEClient } from '@lonord/pi-status-rpc-client'
-import { Button } from '@lonord/react-electron-components'
+import { Button, Dialog } from '@lonord/react-electron-components'
 import * as React from 'react'
 import styled from 'styled-components'
 import DetailDialog from './dialog-detail'
+import Detail from './dialog-detail'
+import { SpeedArea, SpeedAreaWrap, SpeedSignArea, Title } from './layouts'
 import formatSpeedUnit from './util/speed-formatter'
 
 interface MainPropsMap {
@@ -27,8 +29,8 @@ export default class Main extends React.Component<MainProps, MainState> {
 
 	state: MainState = {
 		isDetailOpen: false,
-		sendSpeed: 0,
-		receiveSpeed: 0
+		sendSpeed: -1,
+		receiveSpeed: -1
 	}
 
 	openDetail = () => {
@@ -46,8 +48,8 @@ export default class Main extends React.Component<MainProps, MainState> {
 	updateIfName = (ifName: string) => {
 		if (ifName !== this.props.selectedIfName) {
 			this.setState({
-				sendSpeed: 0,
-				receiveSpeed: 0
+				sendSpeed: -1,
+				receiveSpeed: -1
 			})
 		}
 		this.props.updateProps({
@@ -81,8 +83,10 @@ export default class Main extends React.Component<MainProps, MainState> {
 	componentDidUpdate(prevProps: MainProps) {
 		if (prevProps.rpcBaseUrl !== this.props.rpcBaseUrl) {
 			this.stopSSE()
-			this.rpcService = createRPCClient(this.props.rpcBaseUrl)
-			this.initSSE()
+			if (this.props.rpcBaseUrl) {
+				this.rpcService = createRPCClient(this.props.rpcBaseUrl)
+				this.initSSE()
+			}
 		} else if (prevProps.selectedIfName !== this.props.selectedIfName) {
 			this.stopSSE()
 			this.initSSE()
@@ -91,8 +95,10 @@ export default class Main extends React.Component<MainProps, MainState> {
 
 	componentDidMount() {
 		const { rpcBaseUrl, selectedIfName } = this.props
-		this.rpcService = createRPCClient(rpcBaseUrl)
-		this.initSSE()
+		if (rpcBaseUrl) {
+			this.rpcService = createRPCClient(rpcBaseUrl)
+			this.initSSE()
+		}
 	}
 
 	componentWillUnmount() {
@@ -101,21 +107,34 @@ export default class Main extends React.Component<MainProps, MainState> {
 	}
 
 	render() {
-		const { selectedIfName } = this.props
+		const { selectedIfName, rpcBaseUrl } = this.props
 		const { isDetailOpen, sendSpeed, receiveSpeed } = this.state
+		const sendSpeedLevel = calculateSpeedLevel(sendSpeed)
+		const recvSpeedLevel = calculateSpeedLevel(receiveSpeed)
 		return (
 			<FullSizeWrap onClick={this.openDetail}>
-				<div>{selectedIfName}</div>
-				<div>{formatSpeedUnit(sendSpeed)}</div>
-				<div>{formatSpeedUnit(receiveSpeed)}</div>
-				<DetailDialog
-					isOpen={isDetailOpen}
-					onClose={this.closeDetail}
-					selectedInterface={selectedIfName}
-					onSelectInterface={this.updateIfName}/>
+				<Title>{selectedIfName}</Title>
+				<SpeedAreaWrap>
+					<SpeedSignArea>SEND</SpeedSignArea>
+					<SpeedArea trafficStatus={sendSpeedLevel}>{formatSpeedUnit(sendSpeed)}</SpeedArea>
+				</SpeedAreaWrap>
+				<SpeedAreaWrap>
+					<SpeedSignArea>RECV</SpeedSignArea>
+					<SpeedArea trafficStatus={recvSpeedLevel}>{formatSpeedUnit(receiveSpeed)}</SpeedArea>
+				</SpeedAreaWrap>
+				<Dialog isOpen={isDetailOpen} onClose={this.closeDetail} title="路由器网速">
+					<Detail
+						selectedInterface={selectedIfName}
+						onSelectInterface={this.updateIfName}
+						rpcBaseUrl={rpcBaseUrl} />
+				</Dialog>
 			</FullSizeWrap>
 		)
 	}
+}
+
+function calculateSpeedLevel(n: number) {
+	return n < 1024 * 50 ? 'free' : n < 1024 * 1024 ? 'medium' : 'busy'
 }
 
 const FullSizeWrap = styled.div`
