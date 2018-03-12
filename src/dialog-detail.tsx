@@ -1,12 +1,15 @@
 import createRPCClient, { RPCClient } from '@lonord/pi-status-rpc-client'
+import { FlexHorizental, FlexItemAdaptive } from '@lonord/react-electron-components'
 import * as React from 'react'
 import styled from 'styled-components'
-import { SelectableArea, SubTitle } from './layouts'
+import { RawSpeedArea, SelectableArea, SpeedSignArea, SubTitle } from './layouts'
 
 export interface DetailProps {
 	onSelectInterface(ifName: string)
 	selectedInterface: string
 	rpcBaseUrl: string
+	sendSpeedStr: string
+	recvSpeedStr: string
 }
 
 interface DetailDialogState {
@@ -34,7 +37,7 @@ export default class Detail extends React.Component<DetailProps, DetailDialogSta
 	}
 
 	render() {
-		const { selectedInterface, onSelectInterface, ...rest } = this.props
+		const { selectedInterface, onSelectInterface, sendSpeedStr, recvSpeedStr, ...rest } = this.props
 		const { ifNames, ifNamesLoaded } = this.state
 		return (
 			<div>
@@ -47,6 +50,14 @@ export default class Detail extends React.Component<DetailProps, DetailDialogSta
 								isSelected={name === selectedInterface}
 								onClick={() => onSelectInterface && onSelectInterface(name)}>
 								<IfNameItemText>{name}</IfNameItemText>
+								{name === selectedInterface
+									? <IfSpeedArea>
+										<IfSpeedTag>SEND</IfSpeedTag>
+										<IfSpeedValue>{sendSpeedStr}</IfSpeedValue>
+										<IfSpeedTag>RECV</IfSpeedTag>
+										<IfSpeedValue>{recvSpeedStr}</IfSpeedValue>
+									</IfSpeedArea>
+									: null}
 							</IfNameItem>
 						))}
 					</div>}
@@ -71,4 +82,20 @@ const IfNameItem = styled(SelectableArea) `
 
 const IfNameItemText = styled.div`
 	font-size: 14px;
+`
+
+const IfSpeedArea = FlexHorizental.extend`
+	margin: 8px 4px 4px;
+	color: #999;
+`
+
+const IfSpeedTag = styled(SpeedSignArea) `
+	font-size: 12px;
+	text-align: right;
+`
+
+const IfSpeedValue = styled(RawSpeedArea) `
+	padding-right: 12px;
+	font-size: 12px;
+	width: 100px;
 `

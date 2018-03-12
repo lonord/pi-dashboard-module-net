@@ -21,7 +21,7 @@ export const SpeedAreaWrap = styled.div`
 export interface SpeedAreaProps extends React.HTMLAttributes<HTMLSpanElement> {
 	trafficStatus: 'free' | 'medium' | 'busy'
 }
-const RawSpeedArea = styled.span`
+export const RawSpeedArea = styled.span`
 	width: 145px;
 	text-align: right;
 	display: inline-block;

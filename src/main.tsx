@@ -111,22 +111,26 @@ export default class Main extends React.Component<MainProps, MainState> {
 		const { isDetailOpen, sendSpeed, receiveSpeed } = this.state
 		const sendSpeedLevel = calculateSpeedLevel(sendSpeed)
 		const recvSpeedLevel = calculateSpeedLevel(receiveSpeed)
+		const sendSpeedStr = formatSpeedUnit(sendSpeed)
+		const recvSpeedStr = formatSpeedUnit(receiveSpeed)
 		return (
 			<FullSizeWrap onClick={this.openDetail}>
 				<Title>{selectedIfName}</Title>
 				<SpeedAreaWrap>
 					<SpeedSignArea>SEND</SpeedSignArea>
-					<SpeedArea trafficStatus={sendSpeedLevel}>{formatSpeedUnit(sendSpeed)}</SpeedArea>
+					<SpeedArea trafficStatus={sendSpeedLevel}>{sendSpeedStr}</SpeedArea>
 				</SpeedAreaWrap>
 				<SpeedAreaWrap>
 					<SpeedSignArea>RECV</SpeedSignArea>
-					<SpeedArea trafficStatus={recvSpeedLevel}>{formatSpeedUnit(receiveSpeed)}</SpeedArea>
+					<SpeedArea trafficStatus={recvSpeedLevel}>{recvSpeedStr}</SpeedArea>
 				</SpeedAreaWrap>
 				<Dialog isOpen={isDetailOpen} onClose={this.closeDetail} title="路由器网速">
 					<Detail
 						selectedInterface={selectedIfName}
 						onSelectInterface={this.updateIfName}
-						rpcBaseUrl={rpcBaseUrl} />
+						rpcBaseUrl={rpcBaseUrl}
+						sendSpeedStr={sendSpeedStr}
+						recvSpeedStr={recvSpeedStr} />
 				</Dialog>
 			</FullSizeWrap>
 		)
