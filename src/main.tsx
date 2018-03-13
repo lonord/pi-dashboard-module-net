@@ -4,7 +4,8 @@ import * as React from 'react'
 import styled from 'styled-components'
 import DetailDialog from './dialog-detail'
 import Detail from './dialog-detail'
-import { SpeedArea, SpeedAreaWrap, SpeedSignArea, Title } from './layouts'
+import { name as displayName } from './index'
+import { SpeedArea, SpeedAreaWrap, SpeedIndicator, SpeedSignArea, SubTitle, Title } from './layouts'
 import formatSpeedUnit from './util/speed-formatter'
 
 interface MainPropsMap {
@@ -115,16 +116,18 @@ export default class Main extends React.Component<MainProps, MainState> {
 		const recvSpeedStr = formatSpeedUnit(receiveSpeed)
 		return (
 			<FullSizeWrap onClick={this.openDetail}>
-				<Title>{selectedIfName}</Title>
+				<Title>{displayName + ' - ' + selectedIfName}</Title>
 				<SpeedAreaWrap>
 					<SpeedSignArea>SEND</SpeedSignArea>
-					<SpeedArea trafficStatus={sendSpeedLevel}>{sendSpeedStr}</SpeedArea>
+					<SpeedArea>{sendSpeedStr}</SpeedArea>
+					<SpeedIndicator trafficStatus={sendSpeedLevel}/>
 				</SpeedAreaWrap>
 				<SpeedAreaWrap>
 					<SpeedSignArea>RECV</SpeedSignArea>
-					<SpeedArea trafficStatus={recvSpeedLevel}>{recvSpeedStr}</SpeedArea>
+					<SpeedArea>{recvSpeedStr}</SpeedArea>
+					<SpeedIndicator trafficStatus={recvSpeedLevel} />
 				</SpeedAreaWrap>
-				<Dialog isOpen={isDetailOpen} onClose={this.closeDetail} title="路由器网速">
+				<Dialog isOpen={isDetailOpen} onClose={this.closeDetail} title={displayName}>
 					<Detail
 						selectedInterface={selectedIfName}
 						onSelectInterface={this.updateIfName}

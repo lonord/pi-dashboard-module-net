@@ -2,7 +2,7 @@ import createRPCClient, { RPCClient } from '@lonord/pi-status-rpc-client'
 import { FlexHorizental, FlexItemAdaptive } from '@lonord/react-electron-components'
 import * as React from 'react'
 import styled from 'styled-components'
-import { RawSpeedArea, SelectableArea, SpeedSignArea, SubTitle } from './layouts'
+import { SelectableArea, SpeedArea, SpeedSignArea, SubTitle } from './layouts'
 
 export interface DetailProps {
 	onSelectInterface(ifName: string)
@@ -94,7 +94,7 @@ const IfSpeedTag = styled(SpeedSignArea) `
 	text-align: right;
 `
 
-const IfSpeedValue = styled(RawSpeedArea) `
+const IfSpeedValue = styled(SpeedArea) `
 	padding-right: 12px;
 	font-size: 12px;
 	width: 100px;
