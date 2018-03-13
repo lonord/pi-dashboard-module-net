@@ -1,8 +1,9 @@
+import { SelectableArea, SubTitle } from '@lonord/pi-dashboard-components'
 import createRPCClient, { RPCClient } from '@lonord/pi-status-rpc-client'
 import { FlexHorizental, FlexItemAdaptive } from '@lonord/react-electron-components'
 import * as React from 'react'
 import styled from 'styled-components'
-import { SelectableArea, SpeedArea, SpeedSignArea, SubTitle } from './layouts'
+import { SpeedArea, SpeedSignArea } from './layouts'
 
 export interface DetailProps {
 	onSelectInterface(ifName: string)
@@ -10,6 +11,7 @@ export interface DetailProps {
 	rpcBaseUrl: string
 	sendSpeedStr: string
 	recvSpeedStr: string
+	nameAlias: { [x: string]: string }
 }
 
 interface DetailDialogState {
@@ -37,8 +39,9 @@ export default class Detail extends React.Component<DetailProps, DetailDialogSta
 	}
 
 	render() {
-		const { selectedInterface, onSelectInterface, sendSpeedStr, recvSpeedStr, ...rest } = this.props
+		const { selectedInterface, onSelectInterface, sendSpeedStr, recvSpeedStr, nameAlias, ...rest } = this.props
 		const { ifNames, ifNamesLoaded } = this.state
+		const alias = nameAlias || {}
 		return (
 			<div>
 				<SubTitle>选择网卡</SubTitle>
@@ -49,7 +52,9 @@ export default class Detail extends React.Component<DetailProps, DetailDialogSta
 							<IfNameItem key={idx}
 								isSelected={name === selectedInterface}
 								onClick={() => onSelectInterface && onSelectInterface(name)}>
-								<IfNameItemText>{name}</IfNameItemText>
+								<IfNameItemText>{alias[name]
+									? `${alias[name]}(${name})`
+									: name}</IfNameItemText>
 								{name === selectedInterface
 									? <IfSpeedArea>
 										<IfSpeedTag>SEND</IfSpeedTag>

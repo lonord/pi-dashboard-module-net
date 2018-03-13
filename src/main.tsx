@@ -1,3 +1,4 @@
+import { Title } from '@lonord/pi-dashboard-components'
 import createRPCClient, { RPCClient, SSEClient } from '@lonord/pi-status-rpc-client'
 import { Button, Dialog } from '@lonord/react-electron-components'
 import * as React from 'react'
@@ -5,12 +6,13 @@ import styled from 'styled-components'
 import DetailDialog from './dialog-detail'
 import Detail from './dialog-detail'
 import { name as displayName } from './index'
-import { SpeedArea, SpeedAreaWrap, SpeedIndicator, SpeedSignArea, SubTitle, Title } from './layouts'
+import { SpeedArea, SpeedAreaWrap, SpeedIndicator, SpeedSignArea } from './layouts'
 import formatSpeedUnit from './util/speed-formatter'
 
 interface MainPropsMap {
 	selectedIfName: string
 	rpcBaseUrl: string
+	nameAlias: { [x: string]: string }
 }
 
 interface MainProps extends MainPropsMap {
@@ -108,15 +110,19 @@ export default class Main extends React.Component<MainProps, MainState> {
 	}
 
 	render() {
-		const { selectedIfName, rpcBaseUrl } = this.props
+		const { selectedIfName, rpcBaseUrl, nameAlias } = this.props
 		const { isDetailOpen, sendSpeed, receiveSpeed } = this.state
 		const sendSpeedLevel = calculateSpeedLevel(sendSpeed)
 		const recvSpeedLevel = calculateSpeedLevel(receiveSpeed)
 		const sendSpeedStr = formatSpeedUnit(sendSpeed)
 		const recvSpeedStr = formatSpeedUnit(receiveSpeed)
+		const alias = nameAlias || {}
+		const displayIfName = alias[selectedIfName]
+			? alias[selectedIfName]
+			: selectedIfName
 		return (
 			<FullSizeWrap onClick={this.openDetail}>
-				<Title>{displayName + ' - ' + selectedIfName}</Title>
+				<Title>{displayName + ' - ' + displayIfName}</Title>
 				<SpeedAreaWrap>
 					<SpeedSignArea>SEND</SpeedSignArea>
 					<SpeedArea>{sendSpeedStr}</SpeedArea>
@@ -133,7 +139,8 @@ export default class Main extends React.Component<MainProps, MainState> {
 						onSelectInterface={this.updateIfName}
 						rpcBaseUrl={rpcBaseUrl}
 						sendSpeedStr={sendSpeedStr}
-						recvSpeedStr={recvSpeedStr} />
+						recvSpeedStr={recvSpeedStr}
+						nameAlias={nameAlias} />
 				</Dialog>
 			</FullSizeWrap>
 		)
