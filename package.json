@@ -1,6 +1,6 @@
 {
   "name": "@lonord/pi-dashboard-module-net",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Net status module for pi dashboard",
   "main": "lib/",
   "types": "lib/",
@@ -38,7 +38,7 @@
     "typescript-styled-plugin": "^0.6.0"
   },
   "dependencies": {
-    "@lonord/pi-dashboard-components": "^1.0.2",
+    "@lonord/pi-dashboard-components": "^1.0.3",
     "@lonord/pi-status-rpc-client": "^1.0.9",
     "@lonord/react-electron-components": "^1.0.12"
   }

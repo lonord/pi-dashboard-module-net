@@ -1,6 +1,5 @@
-import { Title, withSSEClient } from '@lonord/pi-dashboard-components'
-import createRPCClient, { RPCClient, SSEClient } from '@lonord/pi-status-rpc-client'
-import { Button, Dialog } from '@lonord/react-electron-components'
+import { FullSizeWrap, Title, withSSEClient } from '@lonord/pi-dashboard-components'
+import { Dialog } from '@lonord/react-electron-components'
 import * as React from 'react'
 import styled from 'styled-components'
 import DetailDialog from './dialog-detail'
@@ -13,10 +12,10 @@ interface MainPropsMap {
 	selectedIfName: string
 	rpcBaseUrl: string
 	nameAlias: { [x: string]: string }
-	speedData: { send: number, receive: number }
 }
 
 interface MainProps extends MainPropsMap {
+	speedData: { send: number, receive: number }
 	updateProps: <K extends keyof MainPropsMap>(props: Pick<MainPropsMap, K>) => void
 }
 
@@ -25,9 +24,6 @@ interface MainState {
 }
 
 class Main extends React.Component<MainProps, MainState> {
-
-	rpcService: RPCClient = null
-	sseClient: SSEClient = null
 
 	state: MainState = {
 		isDetailOpen: false
@@ -96,9 +92,3 @@ export default withSSEClient(Main, 'net-iostat', (p) => ({ ifName: p.selectedIfN
 function calculateSpeedLevel(n: number) {
 	return n < 1024 * 50 ? 'free' : n < 1024 * 1024 ? 'medium' : 'busy'
 }
-
-const FullSizeWrap = styled.div`
-	position: absolute;
-	width: 100%;
-	height: 100%;
-`
