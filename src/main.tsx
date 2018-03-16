@@ -1,4 +1,4 @@
-import { Title } from '@lonord/pi-dashboard-components'
+import { Title, withSSEClient } from '@lonord/pi-dashboard-components'
 import createRPCClient, { RPCClient, SSEClient } from '@lonord/pi-status-rpc-client'
 import { Button, Dialog } from '@lonord/react-electron-components'
 import * as React from 'react'
@@ -13,6 +13,7 @@ interface MainPropsMap {
 	selectedIfName: string
 	rpcBaseUrl: string
 	nameAlias: { [x: string]: string }
+	speedData: { send: number, receive: number }
 }
 
 interface MainProps extends MainPropsMap {
@@ -21,19 +22,15 @@ interface MainProps extends MainPropsMap {
 
 interface MainState {
 	isDetailOpen: boolean
-	sendSpeed: number
-	receiveSpeed: number
 }
 
-export default class Main extends React.Component<MainProps, MainState> {
+class Main extends React.Component<MainProps, MainState> {
 
 	rpcService: RPCClient = null
 	sseClient: SSEClient = null
 
 	state: MainState = {
-		isDetailOpen: false,
-		sendSpeed: -1,
-		receiveSpeed: -1
+		isDetailOpen: false
 	}
 
 	openDetail = () => {
@@ -49,69 +46,16 @@ export default class Main extends React.Component<MainProps, MainState> {
 	}
 
 	updateIfName = (ifName: string) => {
-		if (ifName !== this.props.selectedIfName) {
-			this.setState({
-				sendSpeed: -1,
-				receiveSpeed: -1
-			})
-		}
 		this.props.updateProps({
 			selectedIfName: ifName
 		})
 	}
 
-	onSSEData = (data) => {
-		this.setState({
-			sendSpeed: data.send,
-			receiveSpeed: data.receive
-		})
-	}
-
-	initSSE = () => {
-		const { selectedIfName } = this.props
-		if (selectedIfName) {
-			this.sseClient = this.rpcService.openSSE('net-iostat', this.onSSEData, {
-				ifName: selectedIfName
-			})
-		}
-	}
-
-	stopSSE = () => {
-		if (this.sseClient && !this.sseClient.isClosed()) {
-			this.sseClient.close()
-			this.sseClient = null
-		}
-	}
-
-	componentDidUpdate(prevProps: MainProps) {
-		if (prevProps.rpcBaseUrl !== this.props.rpcBaseUrl) {
-			this.stopSSE()
-			if (this.props.rpcBaseUrl) {
-				this.rpcService = createRPCClient(this.props.rpcBaseUrl)
-				this.initSSE()
-			}
-		} else if (prevProps.selectedIfName !== this.props.selectedIfName) {
-			this.stopSSE()
-			this.initSSE()
-		}
-	}
-
-	componentDidMount() {
-		const { rpcBaseUrl, selectedIfName } = this.props
-		if (rpcBaseUrl) {
-			this.rpcService = createRPCClient(rpcBaseUrl)
-			this.initSSE()
-		}
-	}
-
-	componentWillUnmount() {
-		this.stopSSE()
-		this.rpcService = null
-	}
-
 	render() {
-		const { selectedIfName, rpcBaseUrl, nameAlias } = this.props
-		const { isDetailOpen, sendSpeed, receiveSpeed } = this.state
+		const { selectedIfName, rpcBaseUrl, nameAlias, speedData } = this.props
+		const { isDetailOpen } = this.state
+		const sendSpeed = speedData && speedData.send || 0
+		const receiveSpeed = speedData && speedData.receive || 0
 		const sendSpeedLevel = calculateSpeedLevel(sendSpeed)
 		const recvSpeedLevel = calculateSpeedLevel(receiveSpeed)
 		const sendSpeedStr = formatSpeedUnit(sendSpeed)
@@ -146,6 +90,8 @@ export default class Main extends React.Component<MainProps, MainState> {
 		)
 	}
 }
+
+export default withSSEClient(Main, 'net-iostat', (p) => ({ ifName: p.selectedIfName }), 'speedData')
 
 function calculateSpeedLevel(n: number) {
 	return n < 1024 * 50 ? 'free' : n < 1024 * 1024 ? 'medium' : 'busy'
