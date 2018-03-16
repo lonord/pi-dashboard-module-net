@@ -62,7 +62,7 @@ class Main extends React.Component<MainProps, MainState> {
 			: selectedIfName
 		return (
 			<FullSizeWrap onClick={this.openDetail}>
-				<Title>{displayName + ' - ' + displayIfName}</Title>
+				<Title borderColor="#546E7A">{displayName + ' - ' + displayIfName}</Title>
 				<SpeedAreaWrap>
 					<SpeedSignArea>SEND</SpeedSignArea>
 					<SpeedArea>{sendSpeedStr}</SpeedArea>
