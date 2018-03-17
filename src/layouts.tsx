@@ -7,6 +7,7 @@ import styled from 'styled-components'
 export const SpeedAreaWrap = styled.div`
 	padding: 8px 4px 4px 20px;
 	font-size: 12px;
+	color: #616161;
 `
 
 export const SpeedArea = styled.span`

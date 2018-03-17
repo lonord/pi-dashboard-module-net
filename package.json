@@ -1,6 +1,6 @@
 {
   "name": "@lonord/pi-dashboard-module-net",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Net status module for pi dashboard",
   "main": "lib/",
   "types": "lib/",
